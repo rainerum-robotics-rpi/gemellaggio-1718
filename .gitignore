@@ -102,3 +102,6 @@ ENV/
 
 # Access Tokens
 *.json
+
+# Camera
+image.jpg
