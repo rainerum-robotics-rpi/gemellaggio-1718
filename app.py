@@ -14,18 +14,30 @@ def main():
   # This is a comment.
   # Add your code below this comment and before if __name__ == '__main__':
   
+  # Create LED object on pin 14
+  led = LED(14)
+  
   # First lets check if we have new emails for us.
   messages = rgem_gmail.NewMessages(sender)
   if len(messages) > 0:
+    # We have some messages.
     for message in messages:
-      print(message)
+      # Have we been asked to take a picture?
       msg_subject = message['Subject'].lower();
       if "take a pic" in msg_subject:
-        print("success")
-  #rgem_gmail.SendMessage(sender, to, subject, msgHtml, msgPlain)
-  #rgem_gmail.SendMessage(sender, to, subject, msgHtml, msgPlain, ["chip.png"])
-  #rgem_cam.TakePicture()
-  #rgem_gmail.NewMessages(sender)
+        # Take the picture and send it back.
+        # Show the LED that we are doing something.
+        led.on()
+        pic = rgem_cam.TakePicture()
+        to = message['From']
+        subject = message['Subject']
+        rgem_gmail.SendMessage(sender, to, subject, msgHtml, msgPlain, [ pic ])
+        led.off()
+        print("Sent a picture to: " + to)
 
 if __name__ == '__main__':
-  main()
+  # Bonus: let the program run forever.
+  while True:
+    main()
+    # Sleep for 30 seconds.
+    sleep(30)
