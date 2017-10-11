@@ -73,12 +73,13 @@ def get_credentials():
       print("Could not access file " + client_secret_path)
   return credentials
 
-def NewMessages():
-  """Gets all unread messages.
+def NewMessages(sender):
+  """Gets all unread messages sent to sender.
   
   Returns:
     Messages, the obtained emails.
   """
+  assert(type(sender) == str)
   unread_emails = [ ]
   credentials = get_credentials()
   if not credentials or credentials.invalid:
@@ -98,10 +99,22 @@ def NewMessages():
   # See also: https://developers.google.com/gmail/api/v1/reference/users/messages#resource
   for msg in msgs_list:
     temp_dict = { }
+    is_email_for_me = False
     m_id = msg['id'] # get id of individual message
     message = service.users().messages().get(userId='me', id=m_id).execute()
-    payld = message['payload'] # get payload of the message 
+    payld = message['payload'] # get payload of the message
     hdr = payld['headers'] # get header of the payload
+    
+    for rec in hdr: # getting recipient
+      if rec['name'] == 'To':
+        msg_to = rec['value']
+        if sender in msg_to:
+          is_email_for_me = True
+      else:
+        pass
+    
+    if not is_email_for_me:
+      continue # continue with next message in msgs_list
     
     for sbj in hdr: # getting the Subject
       if sbj['name'] == 'Subject':
@@ -109,7 +122,7 @@ def NewMessages():
         temp_dict['Subject'] = msg_subject
       else:
         pass
-      
+    
     for snd in hdr: # getting the Sender
       if snd['name'] == 'From':
         msg_from = snd['value']
@@ -118,17 +131,17 @@ def NewMessages():
         temp_dict['From'] = addr_tuple[1] # Take email address part
       else:
         pass
-       
+    
     temp_dict['Snippet'] = message['snippet'] # fetching message snippet
     print (temp_dict)
     unread_emails.append(temp_dict) # This will create a dictonary item in the final list
-       
+    
     # This will mark the message as read
     #service.users().messages().modify(userId='me', id=m_id,body={ 'removeLabelIds': ['UNREAD']}).execute()
   return unread_emails
 
 def SendMessage(sender, to, subject, msgHtml, msgPlain, files=[]):
-  assert type(files)==list
+  assert(type(files) == list)
   credentials = get_credentials()
   if not credentials or credentials.invalid:
     return
@@ -191,7 +204,7 @@ def CreateMessageWithAttachment(sender, to, subject, msgHtml, msgPlain, files):
   msg.attach(MIMEText(msgHtml, 'html'))
   #msg.attach(MIMEText(msgPlain, 'plain'))
   
-  ## Part 3 (attachement) 
+  ## Part 3 (attachement)
   # # to attach a text file you containing "test" you would do:
   # # message.attach(MIMEText("test", 'plain'))
   
@@ -209,7 +222,7 @@ def CreateMessageWithAttachment(sender, to, subject, msgHtml, msgPlain, files):
     # for unrecognized extension it set my_mimetypes to  'application/octet-stream'
     # (so it won't return None again). 
     if my_mimetype is None or encoding is not None:
-      my_mimetype = 'application/octet-stream' 
+      my_mimetype = 'application/octet-stream'
     main_type, sub_type = my_mimetype.split('/', 1) # split only at the first '/'
     # if my_mimetype is audio/mp3: main_type=audio sub_type=mp3
     #-----3.2  creating the attachement
@@ -228,11 +241,11 @@ def CreateMessageWithAttachment(sender, to, subject, msgHtml, msgPlain, files):
       temp = open(file, 'rb')
       attachement = MIMEImage(temp.read(), _subtype=sub_type)
       temp.close()
-    elif main_type == 'application' and sub_type == 'pdf':   
+    elif main_type == 'application' and sub_type == 'pdf':
       temp = open(file, 'rb')
       attachement = MIMEApplication(temp.read(), _subtype=sub_type)
       temp.close()
-    else:                              
+    else:
       attachement = MIMEBase(main_type, sub_type)
       temp = open(file, 'rb')
       attachement.set_payload(temp.read())
@@ -242,7 +255,7 @@ def CreateMessageWithAttachment(sender, to, subject, msgHtml, msgPlain, files):
     filename = os.path.basename(file)
     attachement.add_header('Content-Disposition', 'attachment', filename=filename) # name preview in email
     msg.attach(attachement)
- 
+  
   ## Part 4 encode the message (the message should be in bytes)
   msg_bytes = msg.as_bytes() # the message should converted from string to bytes.
   msg_base64 = base64.urlsafe_b64encode(msg_bytes) # encode in base64 (printable letters coding)
