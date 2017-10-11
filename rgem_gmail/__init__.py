@@ -73,7 +73,7 @@ def get_credentials():
       print("Could not access file " + client_secret_path)
   return credentials
 
-def NewMessages(sender):
+def NewMessages(sender, markAsRead = True):
   """Gets all unread messages sent to sender.
   
   Returns:
@@ -133,11 +133,12 @@ def NewMessages(sender):
         pass
     
     temp_dict['Snippet'] = message['snippet'] # fetching message snippet
-    print (temp_dict)
     unread_emails.append(temp_dict) # This will create a dictonary item in the final list
     
-    # This will mark the message as read
-    #service.users().messages().modify(userId='me', id=m_id,body={ 'removeLabelIds': ['UNREAD']}).execute()
+    if markAsRead is True:
+      # This will mark the message as read
+      service.users().messages().modify(userId='me', id=m_id,body={ 'removeLabelIds': ['UNREAD']}).execute()
+    
   return unread_emails
 
 def SendMessage(sender, to, subject, msgHtml, msgPlain, files=[]):
