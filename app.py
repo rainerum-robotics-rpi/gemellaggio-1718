@@ -14,6 +14,15 @@ def main():
   # This is a comment.
   # Add your code below this comment and before if __name__ == '__main__':
   
+  # First lets check if we have new emails for us.
+  messages = rgem_gmail.NewMessages(sender)
+  if len(messages) > 0:
+    for message in messages:
+      print(message)
+  #rgem_gmail.SendMessage(sender, to, subject, msgHtml, msgPlain)
+  #rgem_gmail.SendMessage(sender, to, subject, msgHtml, msgPlain, ["chip.png"])
+  #rgem_cam.TakePicture()
+  #rgem_gmail.NewMessages(sender)
 
 if __name__ == '__main__':
   main()
