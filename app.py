@@ -19,6 +19,9 @@ def main():
   if len(messages) > 0:
     for message in messages:
       print(message)
+      msg_subject = message['Subject'].lower();
+      if "take a pic" in msg_subject:
+        print("success")
   #rgem_gmail.SendMessage(sender, to, subject, msgHtml, msgPlain)
   #rgem_gmail.SendMessage(sender, to, subject, msgHtml, msgPlain, ["chip.png"])
   #rgem_cam.TakePicture()
