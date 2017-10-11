@@ -19,6 +19,7 @@ Python 3.x is used to program this application. Checkout the docs:
 * [Variables](https://docs.python.org/3/tutorial/introduction.html)
 * [Flow controls (if, while, for)](https://docs.python.org/3/tutorial/controlflow.html)
 * [Datastructures (lists, tuples, sets)](https://docs.python.org/3/tutorial/datastructures.html)
+
 There exist two custom libraries that support your program. One is called
 [rgem_gmail](https://github.com/rainerum-robotics-rpi/gemellaggio-1718/tree/master/rgem_gmail)
 and the other one is called
@@ -40,8 +41,13 @@ See also:
 * [time.sleep()](https://docs.python.org/3/library/time.html#time.sleep)
 
 ### Gmail Library
-* `messages = rgem_gmail.NewMessages(address)` Checks out new messages sent to a certain address and marks them as read. The variable *message* contains a dictionary of received emails matching the specified *address*.
-* `rgem_gmail.SendMessage(sender, to, subject, msgHtml, msgPlain, [ pic ])` Sends an email with given text and file attachments from given *sender* address to given *to* destination address. The attachment is a list with one or more filenames.
+* `messages = rgem_gmail.NewMessages(address)` Checks out new messages sent to a
+certain address and marks them as read. The variable *message* contains a
+dictionary of received emails matching the specified *address*.
+* `rgem_gmail.SendMessage(sender, to, subject, msgHtml, msgPlain, [ pic ])` Sends
+an email with given text and file attachments from given *sender* address to
+given *to* destination address. The attachment is a list with one or more filenames.
 
 ### Camera Library
-* `pic = rgem_cam.TakePicture()` Takes a picture and saves it to with the filename as indicated by the return value variable *pic*.
+* `pic = rgem_cam.TakePicture()` Takes a picture and saves it to with the
+filename as indicated by the return value variable *pic*.
